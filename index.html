@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Global Epicure – Rate & Discover the World's Best Dishes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --red: #C0392B; --red-light: #E74C3C; --black: #0a0a0a; --white: #f5f5f0; --glass: rgba(255,255,255,0.07); --glass-border: rgba(255,255,255,0.13); }
+    html, body { height: 100%; font-family: 'Jost', sans-serif; background: var(--black); color: var(--white); overflow-x: hidden; }
+    .hero { position: relative; height: 100vh; overflow: hidden; }
+    .slides { position: absolute; inset: 0; }
+    .slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; animation: slideShow 45s infinite; filter: brightness(0.38); }
+    .slide:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80'); animation-delay: 0s; }
+    .slide:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1600&q=80'); animation-delay: 15s; }
+    .slide:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1600&q=80'); animation-delay: 30s; }
+    @keyframes slideShow { 0% { opacity: 0; transform: scale(1); } 5% { opacity: 1; } 28% { opacity: 1; transform: scale(1.07); } 33% { opacity: 0; transform: scale(1.07); } 100% { opacity: 0; } }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 48px; background: rgba(10,10,10,0.55); backdrop-filter: blur(18px); border-bottom: 1px solid var(--glass-border); }
+    .logo-wrap { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-icon { width: 42px; height: 42px; }
+    .logo-text { display: flex; flex-direction: column; line-height: 1; }
+    .logo-name { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--white); letter-spacing: 0.04em; }
+    .logo-tag { font-size: 0.6rem; font-weight: 300; letter-spacing: 0.14em; color: var(--red-light); text-transform: uppercase; margin-top: 3px; }
+    .nav-links { display: flex; gap: 30px; list-style: none; }
+    .nav-links a { color: rgba(245,245,240,0.75); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--white); }
+    .nav-auth { display: flex; gap: 12px; align-items: center; }
+    .btn-ghost { padding: 8px 20px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--white); border-radius: 3px; font-family: 'Jost', sans-serif; font-size: 0.8rem; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; text-decoration: none; transition: background 0.2s; backdrop-filter: blur(8px); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.14); }
+    .btn-red { padding: 8px 22px; background: var(--red); color: var(--white); border: 1px solid var(--red); border-radius: 3px; font-family: 'Jost', sans-serif; font-size: 0.8rem; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+    .btn-red:hover { background: var(--red-light); }
+    .hero-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 24px; z-index: 10; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--red-light); margin-bottom: 18px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 700; line-height: 1.08; max-width: 800px; margin-bottom: 20px; }
+    .hero-sub { font-size: 1rem; font-weight: 300; color: rgba(245,245,240,0.7); max-width: 480px; line-height: 1.7; margin-bottom: 40px; }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn-lg { padding: 14px 36px; font-size: 0.85rem; letter-spacing: 0.1em; }
+    .btn-guest { padding: 14px 28px; font-size: 0.8rem; background: transparent; border: 1px solid rgba(255,255,255,0.25); color: rgba(245,245,240,0.7); border-radius: 3px; cursor: pointer; font-family: 'Jost', sans-serif; text-transform: uppercase; text-decoration: none; transition: all 0.2s; }
+    .btn-guest:hover { border-color: var(--white); color: var(--white); }
+    .scroll-hint { position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(255,255,255,0.4); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; z-index: 10; }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: scrollPulse 2s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+    .features { display: flex; justify-content: center; background: rgba(255,255,255,0.03); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
+    .feature-item { padding: 32px 48px; text-align: center; border-right: 1px solid var(--glass-border); flex: 1; max-width: 280px; }
+    .feature-item:last-child { border-right: none; }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 10px; }
+    .feature-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; margin-bottom: 6px; }
+    .feature-desc { font-size: 0.75rem; color: rgba(245,245,240,0.5); font-weight: 300; line-height: 1.6; }
+    .section { padding: 90px 60px; max-width: 1200px; margin: 0 auto; }
+    .section-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red-light); margin-bottom: 10px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.8rem); margin-bottom: 50px; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    .dish-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 6px; overflow: hidden; backdrop-filter: blur(12px); transition: transform 0.3s, border-color 0.3s; cursor: pointer; }
+    .dish-card:hover { transform: translateY(-5px); border-color: var(--red); }
+    .dish-card-img { width: 100%; height: 180px; object-fit: cover; filter: brightness(0.85); transition: filter 0.3s; }
+    .dish-card:hover .dish-card-img { filter: brightness(1); }
+    .dish-card-body { padding: 16px 18px; }
+    .dish-card-country { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--red-light); margin-bottom: 6px; }
+    .dish-card-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; margin-bottom: 8px; }
+    .dish-card-rating { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: rgba(245,245,240,0.6); }
+    .stars { color: #e5a000; }
+    footer { border-top: 1px solid var(--glass-border); padding: 30px 60px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); font-size: 0.75rem; color: rgba(245,245,240,0.35); }
+    footer a { color: inherit; text-decoration: none; }
+    footer a:hover { color: var(--white); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); }
+    @media (max-width: 768px) { nav { padding: 16px 24px; } .nav-links { display: none; } .hamburger { display: flex; } .features { flex-direction: column; align-items: center; } .feature-item { border-right: none; border-bottom: 1px solid var(--glass-border); max-width: 100%; } .section { padding: 60px 24px; } footer { flex-direction: column; gap: 10px; text-align: center; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo-wrap">
+    <svg class="logo-icon" viewBox="0 0 42 42" fill="none">
+      <circle cx="21" cy="21" r="19" stroke="#C0392B" stroke-width="1.5"/>
+      <circle cx="21" cy="21" r="13" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+      <line x1="15" y1="11" x2="15" y2="31" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="13" y1="11" x2="13" y2="17" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="17" y1="11" x2="17" y2="17" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+      <path d="M13 17 Q15 19 17 17" stroke="white" stroke-width="1.3" fill="none"/>
+      <path d="M21 11 Q29 16 29 21 Q29 26 21 31" stroke="#C0392B" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M21 11 Q28 21 21 31" stroke="rgba(192,57,43,0.45)" stroke-width="1" fill="none"/>
+      <polygon points="24,18 24.6,20 26.5,20 25,21.2 25.6,23.2 24,22 22.4,23.2 23,21.2 21.5,20 23.4,20" fill="#C0392B" opacity="0.9"/>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-name">Global Epicure</span>
+      <span class="logo-tag">Rate & Discover the World's Best Dishes</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Categories</a></li>
+    <li><a href="#">Trending Dishes</a></li>
+    <li><a href="#">About Us</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#">Support</a></li>
+  </ul>
+  <div class="nav-auth">
+    <a href="signin.html" class="btn-ghost">Sign In</a>
+    <a href="signup.html" class="btn-red">Sign Up</a>
+  </div>
+  <div class="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<section class="hero">
+  <div class="slides">
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">The Global Food Community</p>
+    <h1 class="hero-title">Taste the World.<br>One Dish at a Time.</h1>
+    <p class="hero-sub">Discover, rate, and share the world's finest cuisine. From street food to fine dining — every dish has a story.</p>
+    <div class="hero-ctas">
+      <a href="signup.html" class="btn-red btn-lg">Get Started</a>
+      <a href="signin.html" class="btn-ghost btn-lg">Sign In</a>
+      <a href="home.html" class="btn-guest">Browse as Guest</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div><span>Scroll</span></div>
+</section>
+<div class="features">
+  <div class="feature-item"><div class="feature-icon">🌍</div><div class="feature-title">World Cuisines</div><div class="feature-desc">Explore dishes from every continent, culture, and corner of the globe.</div></div>
+  <div class="feature-item"><div class="feature-icon">⭐</div><div class="feature-title">Rate & Review</div><div class="feature-desc">Share your honest ratings and help others discover great food.</div></div>
+  <div class="feature-item"><div class="feature-icon">🔥</div><div class="feature-title">Trending Now</div><div class="feature-desc">See what dishes are setting the world on fire right now.</div></div>
+  <div class="feature-item"><div class="feature-icon">🗂️</div><div class="feature-title">Curated Lists</div><div class="feature-desc">Build personal collections of your favourite meals and memories.</div></div>
+</div>
+<div class="section">
+  <p class="section-label">What's Hot Right Now</p>
+  <h2 class="section-title">Trending Dishes</h2>
+  <div class="cards-grid">
+    <div class="dish-card"><img class="dish-card-img" src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=70" alt="Ramen"><div class="dish-card-body"><div class="dish-card-country">🇯🇵 Japan</div><div class="dish-card-name">Tonkotsu Ramen</div><div class="dish-card-rating"><span class="stars">★★★★★</span> 4.9 · 2.3k ratings</div></div></div>
+    <div class="dish-card"><img class="dish-card-img" src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&q=70" alt="Tacos"><div class="dish-card-body"><div class="dish-card-country">🇲🇽 Mexico</div><div class="dish-card-name">Street Tacos al Pastor</div><div class="dish-card-rating"><span class="stars">★★★★★</span> 4.8 · 1.9k ratings</div></div></div>
+    <div class="dish-card"><img class="dish-card-img" src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=70" alt="Pasta"><div class="dish-card-body"><div class="dish-card-country">🇮🇹 Italy</div><div class="dish-card-name">Cacio e Pepe</div><div class="dish-card-rating"><span class="stars">★★★★☆</span> 4.7 · 1.4k ratings</div></div></div>
+    <div class="dish-card"><img class="dish-card-img" src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=70" alt="Biryani"><div class="dish-card-body"><div class="dish-card-country">🇮🇳 India</div><div class="dish-card-name">Hyderabadi Biryani</div><div class="dish-card-rating"><span class="stars">★★★★★</span> 4.9 · 3.1k ratings</div></div></div>
+  </div>
+</div>
+<footer>
+  <div>© 2025 Global Epicure. All rights reserved.</div>
+  <div style="display:flex;gap:20px;"><a href="#">Privacy Policy</a><a href="#">Terms & Conditions</a><a href="#">Support</a><a href="#">Contact</a></div>
+</footer>
+</body>
+</html>

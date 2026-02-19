@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In – Global Epicure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --red: #C0392B; --red-light: #E74C3C; --black: #0a0a0a; --white: #f5f5f0; --glass: rgba(255,255,255,0.06); --glass-border: rgba(255,255,255,0.12); --input-bg: rgba(255,255,255,0.05); }
+    html, body { height: 100%; font-family: 'Jost', sans-serif; background: var(--black); color: var(--white); }
+    .page-wrap { min-height: 100vh; display: flex; }
+    .left-panel { flex: 1; background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200&q=80'); background-size: cover; background-position: center; position: relative; display: none; }
+    @media(min-width:900px){ .left-panel { display: block; } }
+    .left-panel::after { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(10,10,10,0.65), rgba(192,57,43,0.25)); }
+    .left-panel-content { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; justify-content:flex-end; padding:48px; }
+    .left-panel-content blockquote { font-family:'Playfair Display',serif; font-size:1.55rem; line-height:1.4; color:var(--white); margin-bottom:16px; }
+    .left-panel-content cite { font-size:0.75rem; color:rgba(245,245,240,0.5); letter-spacing:0.12em; text-transform:uppercase; font-style:normal; }
+    .right-panel { width:100%; max-width:520px; display:flex; flex-direction:column; justify-content:center; padding:48px 40px; background:rgba(8,8,8,0.98); }
+    @media(min-width:900px){ .right-panel { border-left:1px solid var(--glass-border); } }
+    .back-link { display:inline-flex; align-items:center; gap:6px; color:rgba(245,245,240,0.45); font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; margin-bottom:36px; transition:color 0.2s; }
+    .back-link:hover { color:var(--white); }
+    .brand { display:flex; align-items:center; gap:10px; margin-bottom:28px; }
+    .brand-name { font-family:'Playfair Display',serif; font-size:1.1rem; }
+    .brand-tag { font-size:0.58rem; color:var(--red-light); letter-spacing:0.12em; text-transform:uppercase; margin-top:2px; }
+    h2 { font-family:'Playfair Display',serif; font-size:1.9rem; margin-bottom:6px; }
+    .subtitle { font-size:0.82rem; color:rgba(245,245,240,0.45); margin-bottom:28px; font-weight:300; }
+    .btn-google { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:12px; border:1px solid var(--glass-border); background:var(--glass); color:var(--white); border-radius:4px; font-family:'Jost',sans-serif; font-size:0.82rem; cursor:pointer; transition:background 0.2s; margin-bottom:20px; }
+    .btn-google:hover { background:rgba(255,255,255,0.1); }
+    .divider { display:flex; align-items:center; gap:12px; margin-bottom:20px; color:rgba(245,245,240,0.25); font-size:0.72rem; letter-spacing:0.1em; }
+    .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--glass-border); }
+    .method-toggle { display:flex; border:1px solid var(--glass-border); border-radius:4px; overflow:hidden; margin-bottom:20px; }
+    .method-btn { flex:1; padding:10px; background:transparent; border:none; color:rgba(245,245,240,0.45); font-family:'Jost',sans-serif; font-size:0.78rem; letter-spacing:0.06em; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+    .method-btn.active { background:var(--red); color:var(--white); }
+    .country-row { display:flex; gap:10px; }
+    .country-select { width:150px; flex-shrink:0; background:var(--input-bg); border:1px solid var(--glass-border); color:var(--white); padding:12px 10px; border-radius:4px; font-family:'Jost',sans-serif; font-size:0.82rem; cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:28px; }
+    .country-select:focus { outline:none; border-color:var(--red); }
+    .country-select option { background:#1a1a1a; }
+    .field { margin-bottom:14px; }
+    .field label { display:block; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,245,240,0.45); margin-bottom:6px; }
+    .field input { width:100%; padding:12px 14px; background:var(--input-bg); border:1px solid var(--glass-border); color:var(--white); border-radius:4px; font-family:'Jost',sans-serif; font-size:0.9rem; transition:border-color 0.2s; }
+    .field input:focus { outline:none; border-color:var(--red); }
+    .field input::placeholder { color:rgba(245,245,240,0.2); }
+    .forgot { text-align:right; margin-bottom:20px; margin-top:-8px; font-size:0.72rem; }
+    .forgot a { color:rgba(245,245,240,0.4); text-decoration:none; transition:color 0.2s; }
+    .forgot a:hover { color:var(--red-light); }
+    .error-msg { color:var(--red-light); font-size:0.78rem; margin-bottom:14px; display:none; padding:10px 12px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.3); border-radius:4px; }
+    .success-msg { color:#2ecc71; font-size:0.78rem; margin-bottom:14px; display:none; }
+    .btn-submit { width:100%; padding:13px; background:var(--red); color:var(--white); border:none; border-radius:4px; font-family:'Jost',sans-serif; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; margin-bottom:18px; }
+    .btn-submit:hover { background:var(--red-light); }
+    .btn-submit:disabled { background:rgba(192,57,43,0.4); cursor:not-allowed; }
+    .signup-link { text-align:center; font-size:0.78rem; color:rgba(245,245,240,0.4); }
+    .signup-link a { color:var(--red-light); text-decoration:none; }
+    .modal-overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:#111; border:1px solid var(--glass-border); border-radius:6px; padding:36px 32px; width:100%; max-width:380px; position:relative; }
+    .modal h3 { font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:8px; }
+    .modal p { font-size:0.78rem; color:rgba(245,245,240,0.45); margin-bottom:20px; font-weight:300; }
+    .modal-close { position:absolute; top:12px; right:14px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:1.2rem; cursor:pointer; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="left-panel">
+    <div class="left-panel-content">
+      <blockquote>"Every meal is a journey to another culture."</blockquote>
+      <cite>— Global Epicure</cite>
+    </div>
+  </div>
+  <div class="right-panel">
+    <a href="index.html" class="back-link">← Back to Home</a>
+    <div class="brand">
+      <svg width="32" height="32" viewBox="0 0 42 42" fill="none">
+        <circle cx="21" cy="21" r="19" stroke="#C0392B" stroke-width="1.5"/>
+        <line x1="15" y1="11" x2="15" y2="31" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="13" y1="11" x2="13" y2="17" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="17" y1="11" x2="17" y2="17" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M13 17 Q15 19 17 17" stroke="white" stroke-width="1.3" fill="none"/>
+        <path d="M21 11 Q29 16 29 21 Q29 26 21 31" stroke="#C0392B" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <polygon points="24,18 24.6,20 26.5,20 25,21.2 25.6,23.2 24,22 22.4,23.2 23,21.2 21.5,20 23.4,20" fill="#C0392B"/>
+      </svg>
+      <div><div class="brand-name">Global Epicure</div><div class="brand-tag">Rate & Discover the World's Best Dishes</div></div>
+    </div>
+    <h2>Welcome Back</h2>
+    <p class="subtitle">Sign in to continue your culinary journey.</p>
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.7 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.58a5.62 5.62 0 01-2.44 3.68v3.06h3.95c2.31-2.13 3.64-5.27 3.64-9.04z"/><path fill="#34A853" d="M12 24c3.31 0 6.08-1.1 8.1-2.97l-3.95-3.06a7.45 7.45 0 01-4.15 1.17 7.42 7.42 0 01-6.98-5.13H.95v3.16A12 12 0 0012 24z"/><path fill="#FBBC05" d="M5.02 14.01A7.35 7.35 0 014.62 12c0-.7.12-1.37.4-2.01V6.83H.95A12 12 0 000 12c0 1.93.46 3.76 1.27 5.38l3.75-3.37z"/><path fill="#EA4335" d="M12 4.75a6.5 6.5 0 014.6 1.8l3.43-3.43A11.52 11.52 0 0012 0 12 12 0 00.95 6.83L4.7 9.99A7.41 7.41 0 0112 4.75z"/></svg>
+      Continue with Google
+    </button>
+    <div class="divider">or sign in with</div>
+    <div class="method-toggle">
+      <button class="method-btn active" id="emailBtn" onclick="switchMethod('email')">📧 Email</button>
+      <button class="method-btn" id="phoneBtn" onclick="switchMethod('phone')">📱 Phone</button>
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="success-msg" id="successMsg"></div>
+    <div id="emailFields">
+      <div class="field"><label>Email Address</label><input type="email" id="emailInput" placeholder="you@example.com"/></div>
+      <div class="field"><label>Password</label><input type="password" id="passwordInput" placeholder="Your password" onkeydown="if(event.key==='Enter')handleSignIn()"/></div>
+    </div>
+    <div id="phoneFields" style="display:none;">
+      <div class="field">
+        <label>Phone Number</label>
+        <div class="country-row">
+          <select class="country-select" id="countrySelect">
+            <option value="+254">🇰🇪 Kenya (+254)</option>
+            <option value="+1">🇺🇸 USA (+1)</option>
+            <option value="+44">🇬🇧 UK (+44)</option>
+            <option value="+234">🇳🇬 Nigeria (+234)</option>
+            <option value="+27">🇿🇦 S. Africa (+27)</option>
+          </select>
+          <input type="tel" id="phoneInput" placeholder="712 345 678" style="flex:1"/>
+        </div>
+      </div>
+    </div>
+    <div class="forgot"><a href="#" onclick="openReset()">Forgot password?</a></div>
+    <button class="btn-submit" id="submitBtn" onclick="handleSignIn()">Continue →</button>
+    <div class="signup-link">Don't have an account? <a href="signup.html">Sign Up</a></div>
+  </div>
+</div>
+<div class="modal-overlay" id="resetModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeReset()">✕</button>
+    <h3>Reset Password</h3>
+    <p>Enter your email and we'll send you a reset link.</p>
+    <div class="success-msg" id="resetSuccess" style="display:none;margin-bottom:12px;"></div>
+    <div class="error-msg" id="resetError" style="display:none;margin-bottom:12px;"></div>
+    <div class="field"><label>Email Address</label><input type="email" id="resetEmail" placeholder="you@example.com"/></div>
+    <button class="btn-submit" style="margin-top:8px;" onclick="sendReset()">Send Reset Link</button>
+  </div>
+</div>
+<script>
+  const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co';
+  const SUPABASE_ANON = 'YOUR_ANON_PUBLIC_KEY';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  let currentMethod = 'email';
+  function switchMethod(m){currentMethod=m;document.getElementById('emailFields').style.display=m==='email'?'block':'none';document.getElementById('phoneFields').style.display=m==='phone'?'block':'none';document.getElementById('emailBtn').classList.toggle('active',m==='email');document.getElementById('phoneBtn').classList.toggle('active',m==='phone');clearMessages();}
+  function showError(msg){const e=document.getElementById('errorMsg');e.innerHTML=msg;e.style.display='block';document.getElementById('successMsg').style.display='none';}
+  function showSuccess(msg){const e=document.getElementById('successMsg');e.textContent=msg;e.style.display='block';document.getElementById('errorMsg').style.display='none';}
+  function clearMessages(){document.getElementById('errorMsg').style.display='none';document.getElementById('successMsg').style.display='none';}
+  async function signInWithGoogle(){clearMessages();const{error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/home.html'}});if(error)showError(error.message);}
+  async function handleSignIn(){
+    clearMessages();
+    const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Signing in…';
+    try{
+      if(currentMethod==='email'){
+        const email=document.getElementById('emailInput').value.trim();
+        const password=document.getElementById('passwordInput').value;
+        if(!email||!password){showError('Please fill in all fields.');btn.disabled=false;btn.textContent='Continue →';return;}
+        const{error}=await supabase.auth.signInWithPassword({email,password});
+        if(error)throw error;
+        window.location.href='home.html';
+      }else{
+        const code=document.getElementById('countrySelect').value;
+        const local=document.getElementById('phoneInput').value.trim().replace(/^0/,'');
+        if(!local){showError('Please enter your phone number.');btn.disabled=false;btn.textContent='Continue →';return;}
+        const{error}=await supabase.auth.signInWithOtp({phone:code+local});
+        if(error)throw error;
+        showSuccess('OTP sent to your phone!');showOTPField(code+local);
+      }
+    }catch(e){showError('Account does not exist. Please check your details or <a href="signup.html" style="color:var(--red-light)">create an account</a>.');btn.disabled=false;btn.textContent='Continue →';}
+  }
+  function showOTPField(phone){
+    const btn=document.getElementById('submitBtn');btn.textContent='Continue →';btn.disabled=false;
+    if(document.getElementById('otpField'))return;
+    const div=document.createElement('div');div.className='field';div.id='otpField';
+    div.innerHTML='<label>OTP Code</label><input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6"/>';
+    btn.parentNode.insertBefore(div,btn);btn.onclick=()=>verifyOTP(phone);
+  }
+  async function verifyOTP(phone){clearMessages();const token=(document.getElementById('otpInput')?.value||'').trim();if(!token){showError('Please enter the OTP.');return;}const{error}=await supabase.auth.verifyOtp({phone,token,type:'sms'});if(error){showError('Invalid OTP. Try again.');return;}window.location.href='home.html';}
+  function openReset(){document.getElementById('resetModal').classList.add('open');}
+  function closeReset(){document.getElementById('resetModal').classList.remove('open');}
+  async function sendReset(){
+    const email=document.getElementById('resetEmail').value.trim();
+    document.getElementById('resetError').style.display='none';document.getElementById('resetSuccess').style.display='none';
+    if(!email){document.getElementById('resetError').textContent='Enter a valid email.';document.getElementById('resetError').style.display='block';return;}
+    const{error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/reset.html'});
+    if(error){document.getElementById('resetError').textContent=error.message;document.getElementById('resetError').style.display='block';}
+    else{document.getElementById('resetSuccess').textContent='Reset link sent! Check your inbox.';document.getElementById('resetSuccess').style.display='block';}
+  }
+</script>
+</body>
+</html>
