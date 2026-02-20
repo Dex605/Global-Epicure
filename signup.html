@@ -104,6 +104,13 @@
             <option value="+44">🇬🇧 UK (+44)</option>
             <option value="+234">🇳🇬 Nigeria (+234)</option>
             <option value="+27">🇿🇦 S. Africa (+27)</option>
+            <option value="+233">🇬🇭 Ghana (+233)</option>
+            <option value="+255">🇹🇿 Tanzania (+255)</option>
+            <option value="+256">🇺🇬 Uganda (+256)</option>
+            <option value="+251">🇪🇹 Ethiopia (+251)</option>
+            <option value="+212">🇲🇦 Morocco (+212)</option>
+            <option value="+20">🇪🇬 Egypt (+20)</option>
+            <option value="+91">🇮🇳 India (+91)</option>
           </select>
           <input type="tel" id="phoneInput" placeholder="712 345 678" style="flex:1"/>
         </div>
@@ -123,7 +130,20 @@
   const SUPABASE_ANON = 'YOUR_ANON_PUBLIC_KEY';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
   let currentMethod = 'email';
-  function switchMethod(m){currentMethod=m;document.getElementById('emailFields').style.display=m==='email'?'block':'none';document.getElementById('phoneFields').style.display=m==='phone'?'block':'none';document.getElementById('emailBtn').classList.toggle('active',m==='email');document.getElementById('phoneBtn').classList.toggle('active',m==='phone');}
+  function switchMethod(m){
+  currentMethod = m;
+  if(m === 'email'){
+    document.getElementById('emailFields').style.display = 'block';
+    document.getElementById('phoneFields').style.display = 'none';
+    document.getElementById('emailBtn').classList.add('active');
+    document.getElementById('phoneBtn').classList.remove('active');
+  } else {
+    document.getElementById('emailFields').style.display = 'none';
+    document.getElementById('phoneFields').style.display = 'block';
+    document.getElementById('emailBtn').classList.remove('active');
+    document.getElementById('phoneBtn').classList.add('active');
+  }
+}
   function showError(msg){const e=document.getElementById('errorMsg');e.textContent=msg;e.style.display='block';document.getElementById('successMsg').style.display='none';}
   function showSuccess(msg){const e=document.getElementById('successMsg');e.textContent=msg;e.style.display='block';document.getElementById('errorMsg').style.display='none';}
   function clearMessages(){document.getElementById('errorMsg').style.display='none';document.getElementById('successMsg').style.display='none';}
