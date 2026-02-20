@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delicacies – Global Epicure</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --red: #C0392B; --red-light: #E74C3C; --black: #0a0a0a; --white: #f5f5f0; --glass: rgba(255,255,255,0.06); --glass-border: rgba(255,255,255,0.12); --input-bg: rgba(255,255,255,0.05); --sidebar-w: 220px; }
+    html, body { height: 100%; font-family: 'Jost', sans-serif; background: var(--black); color: var(--white); overflow-x: hidden; }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { width: var(--sidebar-w); flex-shrink: 0; background: rgba(8,8,8,0.98); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
+    .sidebar-logo { padding: 22px 18px; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; }
+    .sidebar-logo-name { font-family: 'Playfair Display', serif; font-size: 1rem; }
+    .sidebar-logo-tag { font-size: 0.52rem; color: var(--red-light); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+    .nav-menu { flex: 1; padding: 16px 0; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 13px 22px; cursor: pointer; color: rgba(245,245,240,0.5); font-size: 0.82rem; letter-spacing: 0.05em; transition: all 0.2s; border-left: 3px solid transparent; text-transform: uppercase; text-decoration: none; }
+    .nav-item:hover { color: var(--white); background: var(--glass); }
+    .nav-item.active { color: var(--white); border-left-color: var(--red); background: rgba(192,57,43,0.1); }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--glass-border); }
+    .user-chip { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 6px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 600; flex-shrink: 0; }
+    .user-name { font-size: 0.76rem; font-weight: 500; }
+    .user-id { font-size: 0.6rem; color: rgba(245,245,240,0.4); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 40; }
+    .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; position: relative; transition: background 0.2s; }
+    .icon-btn:hover { background: rgba(255,255,255,0.12); }
+    .notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: var(--red); border-radius: 50%; }
+    .dots-wrap { position: relative; }
+    .dots-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.4rem; font-weight: 900; color: var(--white); transition: background 0.2s; letter-spacing: 0; line-height: 1; }
+    .dots-btn:hover { background: rgba(255,255,255,0.12); }
+    .dots-dropdown { position: absolute; top: 44px; right: 0; background: #111; border: 1px solid var(--glass-border); border-radius: 8px; min-width: 200px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); display: none; z-index: 200; overflow: hidden; }
+    .dots-dropdown.open { display: block; }
+    .dots-item { padding: 11px 16px; font-size: 0.8rem; color: rgba(245,245,240,0.7); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.15s; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .dots-item:last-child { border-bottom: none; }
+    .dots-item:hover { background: var(--glass); color: var(--white); }
+    .dots-item.danger { color: var(--red-light); }
+    .dots-item.danger:hover { background: rgba(192,57,43,0.1); }
+    .page-content { padding: 28px; flex: 1; }
+    .section-header { margin-bottom: 24px; }
+    .section-eyebrow { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red-light); margin-bottom: 5px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; }
+    .mobile-menu-btn { display: none; background: none; border: none; color: var(--white); font-size: 1.3rem; cursor: pointer; }
+    .green { color: #2ecc71; } .gold { color: #e5a000; } .red-val { color: var(--red-light); } .dim { color: rgba(245,245,240,0.5); }
+    .round-info { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .round-badge { padding: 5px 14px; border-radius: 20px; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--glass-border); background: var(--glass); color: rgba(245,245,240,0.5); }
+    .round-badge.active-round { background: rgba(192,57,43,0.15); border-color: var(--red); color: var(--red-light); }
+    .progress-bar-wrap { margin-bottom: 22px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.68rem; color: rgba(245,245,240,0.35); margin-bottom: 6px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .progress-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(to right, var(--red), var(--red-light)); border-radius: 2px; transition: width 0.4s; }
+    .unlock-msg { background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.3); border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; font-size: 0.8rem; color: rgba(245,245,240,0.7); display: none; }
+    .unlock-msg strong { color: var(--red-light); }
+    .dish-viewer { max-width: 480px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; }
+    .dish-img-wrap { position: relative; height: 260px; overflow: hidden; }
+    .dish-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .dish-viewer:hover .dish-img { transform: scale(1.05); }
+    .dish-num-badge { position: absolute; top: 14px; left: 14px; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); border: 1px solid var(--glass-border); padding: 4px 12px; border-radius: 20px; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .special-badge { position: absolute; top: 14px; right: 14px; background: linear-gradient(135deg, #e5a000, #c0392b); padding: 4px 12px; border-radius: 20px; font-size: 0.68rem; font-weight: 600; display: none; }
+    .dish-body { padding: 22px; }
+    .dish-country { font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red-light); margin-bottom: 5px; }
+    .dish-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 5px; }
+    .dish-reviews { font-size: 0.72rem; color: rgba(245,245,240,0.35); margin-bottom: 18px; }
+    .star-rating { display: flex; gap: 8px; margin-bottom: 16px; justify-content: center; }
+    .star { font-size: 2rem; cursor: pointer; color: rgba(255,255,255,0.15); transition: all 0.15s; }
+    .star:hover, .star.active { color: #e5a000; transform: scale(1.2); }
+    .dish-earn { text-align: center; font-size: 0.78rem; color: rgba(245,245,240,0.45); margin-bottom: 18px; }
+    .dish-earn span { color: #2ecc71; font-weight: 600; }
+    .dish-actions { display: flex; gap: 10px; }
+    .btn-rate { flex: 1; padding: 12px; background: var(--red); color: var(--white); border: none; border-radius: 6px; font-family: 'Jost', sans-serif; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .btn-rate:hover { background: var(--red-light); }
+    .btn-rate:disabled { background: rgba(192,57,43,0.25); cursor: not-allowed; }
+    .btn-next { flex: 1; padding: 12px; background: var(--glass); color: var(--white); border: 1px solid var(--glass-border); border-radius: 6px; font-family: 'Jost', sans-serif; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .btn-next:hover { background: rgba(255,255,255,0.1); }
+    .depleted-msg { text-align: center; padding: 60px 20px; display: none; }
+    .depleted-msg h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 10px; color: var(--red-light); }
+    .depleted-msg p { color: rgba(245,245,240,0.45); font-size: 0.83rem; }
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.82); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #111; border: 1px solid var(--glass-border); border-radius: 12px; padding: 32px 28px; width: 100%; max-width: 460px; position: relative; max-height: 88vh; overflow-y: auto; }
+    .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: rgba(255,255,255,0.35); font-size: 1.2rem; cursor: pointer; }
+    .modal-close:hover { color: var(--white); }
+    .modal h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 6px; }
+    .modal-sub { font-size: 0.78rem; color: rgba(245,245,240,0.4); margin-bottom: 22px; }
+    .payment-methods { display: flex; flex-direction: column; gap: 10px; }
+    .pay-method { padding: 13px 16px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 0.83rem; }
+    .pay-icon { font-size: 1.1rem; width: 22px; }
+    .text-content h4 { font-family: 'Playfair Display', serif; font-size: 0.95rem; margin: 16px 0 7px; color: var(--red-light); }
+    .text-content p { font-size: 0.8rem; color: rgba(245,245,240,0.6); line-height: 1.8; }
+    .notif-item { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; align-items: flex-start; }
+    .notif-dot-sm { width: 7px; height: 7px; background: var(--red); border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .notif-text { font-size: 0.8rem; color: rgba(245,245,240,0.65); line-height: 1.5; }
+    .notif-time { font-size: 0.65rem; color: rgba(245,245,240,0.28); margin-top: 3px; }
+    .settings-label { font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,245,240,0.35); margin-bottom: 10px; }
+    .theme-btns { display: flex; gap: 10px; }
+    .theme-btn { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass); color: rgba(245,245,240,0.55); font-family: 'Jost', sans-serif; font-size: 0.78rem; cursor: pointer; text-align: center; }
+    .theme-btn.active { background: rgba(192,57,43,0.15); border-color: var(--red); color: var(--white); }
+    .lang-select { width: 100%; padding: 11px 14px; background: var(--input-bg); border: 1px solid var(--glass-border); color: var(--white); border-radius: 6px; font-family: 'Jost', sans-serif; font-size: 0.83rem; }
+    .lang-select option { background: #1a1a1a; }
+    .btn-confirm { width: 100%; padding: 12px; background: var(--red); color: var(--white); border: none; border-radius: 6px; font-family: 'Jost', sans-serif; font-size: 0.83rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+    .profile-avatar-lg { width: 66px; height: 66px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 600; margin: 0 auto 18px; }
+    .profile-info { text-align: center; margin-bottom: 22px; }
+    .profile-name { font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 4px; }
+    .profile-email { font-size: 0.78rem; color: rgba(245,245,240,0.4); margin-bottom: 10px; }
+    .profile-id-badge { display: inline-block; padding: 4px 14px; background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.3); border-radius: 20px; font-size: 0.7rem; color: var(--red-light); }
+    .referral-box { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 8px; padding: 16px; margin-top: 14px; }
+    .referral-label { font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,245,240,0.35); margin-bottom: 6px; }
+    .referral-id { font-size: 0.92rem; font-weight: 500; color: #e5a000; }
+    @media(max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .mobile-menu-btn { display: block; }
+      .page-content { padding: 18px 14px; }
+      .topbar { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <svg width="26" height="26" viewBox="0 0 42 42" fill="none">
+        <circle cx="21" cy="21" r="19" stroke="#C0392B" stroke-width="1.5"/>
+        <line x1="15" y1="11" x2="15" y2="31" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="13" y1="11" x2="13" y2="17" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="17" y1="11" x2="17" y2="17" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M13 17 Q15 19 17 17" stroke="white" stroke-width="1.3" fill="none"/>
+        <path d="M21 11 Q29 16 29 21 Q29 26 21 31" stroke="#C0392B" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <polygon points="24,18 24.6,20 26.5,20 25,21.2 25.6,23.2 24,22 22.4,23.2 23,21.2 21.5,20 23.4,20" fill="#C0392B"/>
+      </svg>
+      <div>
+        <div class="sidebar-logo-name">Global Epicure</div>
+        <div class="sidebar-logo-tag">Food Rating Platform</div>
+      </div>
+    </div>
+    <nav class="nav-menu">
+      <a class="nav-item" href="home.html"><span class="nav-icon">🏠</span>Home</a>
+      <a class="nav-item active" href="delicacies.html"><span class="nav-icon">🍽️</span>Delicacies</a>
+      <a class="nav-item" href="wallet.html"><span class="nav-icon">💰</span>Wallet</a>
+      <a class="nav-item" href="incentives.html"><span class="nav-icon">🎁</span>Incentives</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar" id="sidebarAvatar">JD</div>
+        <div>
+          <div class="user-name" id="sidebarName">John Doe</div>
+          <div class="user-id" id="sidebarId">GE-000001</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <span class="topbar-title">Delicacies</span>
+      </div>
+      <div class="topbar-right">
+        <div class="icon-btn" onclick="openModal('notifModal')">🔔<div class="notif-dot"></div></div>
+        <div class="dots-wrap">
+          <div class="dots-btn" onclick="toggleDots()">⋮</div>
+          <div class="dots-dropdown" id="dotsDropdown">
+            <div class="dots-item" onclick="openModal('profileModal');closeDots()">👤 My Profile</div>
+            <div class="dots-item" onclick="openModal('settingsModal');closeDots()">⚙️ Account Settings</div>
+            <div class="dots-item" onclick="openModal('langModal');closeDots()">🌐 Language</div>
+            <div class="dots-item" onclick="openModal('notifModal');closeDots()">🔔 Notifications</div>
+            <div class="dots-item" onclick="openModal('supportModal');closeDots()">💬 Help / Support</div>
+            <div class="dots-item" onclick="openModal('contactModal');closeDots()">📞 Contact Us</div>
+            <div class="dots-item" onclick="openModal('aboutModal');closeDots()">ℹ️ About Us</div>
+            <div class="dots-item" onclick="openModal('termsModal');closeDots()">📄 Terms of Service</div>
+            <div class="dots-item" onclick="openModal('privacyModal');closeDots()">🔒 Privacy Policy</div>
+            <div class="dots-item danger" onclick="logout()">🚪 Log Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="section-header">
+        <div class="section-eyebrow">Rate & Discover</div>
+        <div class="section-title">Delicacies</div>
+      </div>
+      <div class="round-info">
+        <div class="round-badge active-round" id="rb1">Round 1 — Bonus</div>
+        <div class="round-badge" id="rb2">Round 2 — $30 Deposit</div>
+        <div class="round-badge" id="rb3">Round 3 — Haute Cuisine</div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-label"><span>Progress</span><span id="progText">0 / 32</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      </div>
+      <div class="unlock-msg" id="unlockMsg"></div>
+      <div id="dishViewer" class="dish-viewer">
+        <div class="dish-img-wrap">
+          <img class="dish-img" id="dishImg" src="" alt=""/>
+          <div class="dish-num-badge" id="dishNum">Dish 1 of 32</div>
+          <div class="special-badge" id="specialBadge">⭐ Haute Cuisine</div>
+        </div>
+        <div class="dish-body">
+          <div class="dish-country" id="dishCountry"></div>
+          <div class="dish-name" id="dishName"></div>
+          <div class="dish-reviews" id="dishReviews"></div>
+          <div class="star-rating" id="stars">
+            <span class="star" onclick="setRating(1)">★</span>
+            <span class="star" onclick="setRating(2)">★</span>
+            <span class="star" onclick="setRating(3)">★</span>
+            <span class="star" onclick="setRating(4)">★</span>
+            <span class="star" onclick="setRating(5)">★</span>
+          </div>
+          <div class="dish-earn" id="dishEarn"></div>
+          <div class="dish-actions">
+            <button class="btn-rate" id="rateBtn" onclick="rateDish()">Rate Dish</button>
+            <button class="btn-next" onclick="nextDish()">Next →</button>
+          </div>
+        </div>
+      </div>
+      <div class="depleted-msg" id="depletedMsg">
+        <div style="font-size:3rem;margin-bottom:14px;">🍽️</div>
+        <h3>Dishes Depleted</h3>
+        <p>You have rated all available dishes for today.<br/>Come back tomorrow for more!</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="profileModal"><div class="modal"><button class="modal-close" onclick="closeModal('profileModal')">✕</button><h3>My Profile</h3><div style="margin-top:22px;"><div class="profile-avatar-lg" id="profAvatar">JD</div><div class="profile-info"><div class="profile-name" id="profName">John Doe</div><div class="profile-email" id="profEmail">john@example.com</div><div class="profile-id-badge" id="profId">ID: GE-000001</div></div><div class="referral-box"><div class="referral-label">Your Referral ID</div><div class="referral-id" id="refId">GE-000001</div><div style="font-size:0.68rem;color:rgba(245,245,240,0.35);margin-top:5px;">Share this ID with friends to earn $3 referral bonus each.</div></div></div></div></div>
+<div class="modal-overlay" id="settingsModal"><div class="modal"><button class="modal-close" onclick="closeModal('settingsModal')">✕</button><h3>Account Settings</h3><div style="margin-top:22px;"><div class="settings-label">Theme</div><div class="theme-btns"><div class="theme-btn active" onclick="setTheme('dark',this)">🌙 Dark Mode</div><div class="theme-btn" onclick="setTheme('light',this)">☀️ Light Mode</div></div></div></div></div>
+<div class="modal-overlay" id="langModal"><div class="modal"><button class="modal-close" onclick="closeModal('langModal')">✕</button><h3>Language</h3><p class="modal-sub">Select your preferred language.</p><select class="lang-select"><option>🇬🇧 English</option><option>🇫🇷 French — Français</option><option>🇪🇸 Spanish — Español</option><option>🇰🇪 Swahili — Kiswahili</option><option>🇸🇦 Arabic — العربية</option></select><button class="btn-confirm" style="margin-top:14px;" onclick="closeModal('langModal')">Save Language</button></div></div>
+<div class="modal-overlay" id="notifModal"><div class="modal"><button class="modal-close" onclick="closeModal('notifModal')">✕</button><h3>Notifications</h3><div style="margin-top:18px;"><div class="notif-item"><div class="notif-dot-sm"></div><div><div class="notif-text">New dish added: <strong>Jollof Rice</strong> is now available!</div><div class="notif-time">2 minutes ago</div></div></div><div class="notif-item"><div class="notif-dot-sm"></div><div><div class="notif-text">Your withdrawal of <strong>$15.00</strong> is being processed.</div><div class="notif-time">1 hour ago</div></div></div><div class="notif-item"><div class="notif-dot-sm"></div><div><div class="notif-text">Welcome bonus of <strong>$50.00</strong> added to your account!</div><div class="notif-time">Today</div></div></div></div></div></div>
+<div class="modal-overlay" id="supportModal"><div class="modal"><button class="modal-close" onclick="closeModal('supportModal')">✕</button><h3>Help / Support</h3><p class="modal-sub">Contact our support team for assistance.</p><div class="payment-methods"><div class="pay-method"><span class="pay-icon">💬</span>Live Chat with Admin</div><div class="pay-method"><span class="pay-icon">📧</span>support@globalepicure.com</div><div class="pay-method"><span class="pay-icon">📱</span>WhatsApp Support</div></div></div></div>
+<div class="modal-overlay" id="contactModal"><div class="modal"><button class="modal-close" onclick="closeModal('contactModal')">✕</button><h3>Contact Us</h3><p class="modal-sub">Get in touch with the Global Epicure team.</p><div class="payment-methods"><div class="pay-method"><span class="pay-icon">📧</span>hello@globalepicure.com</div><div class="pay-method"><span class="pay-icon">📱</span>+1 (800) EPICURE</div><div class="pay-method"><span class="pay-icon">🐦</span>@GlobalEpicure</div><div class="pay-method"><span class="pay-icon">📘</span>Facebook: Global Epicure</div></div></div></div>
+<div class="modal-overlay" id="aboutModal"><div class="modal"><button class="modal-close" onclick="closeModal('aboutModal')">✕</button><h3>About Us</h3><div class="text-content" style="margin-top:18px;"><p>Welcome to <strong>Global Epicure</strong> — a global community of food lovers.</p><h4>What We Do</h4><p>We provide a platform where you can rate dishes and earn rewards.</p></div></div></div>
+<div class="modal-overlay" id="termsModal"><div class="modal"><button class="modal-close" onclick="closeModal('termsModal')">✕</button><h3>Terms of Service</h3><div class="text-content" style="margin-top:18px;"><h4>1. Acceptance</h4><p>By using Global Epicure, you agree to these terms.</p><h4>2. Earnings & Withdrawals</h4><p>Minimum withdrawal is $10. Complete Round 1 before requesting withdrawal.</p></div></div></div>
+<div class="modal-overlay" id="privacyModal"><div class="modal"><button class="modal-close" onclick="closeModal('privacyModal')">✕</button><h3>Privacy Policy</h3><div class="text-content" style="margin-top:18px;"><h4>Data We Collect</h4><p>We collect your name, email, dish ratings, and transaction data.</p></div></div></div>
+<script>
+const S = { user: { name:'John Doe', email:'john@example.com', id:'GE-'+String(Math.floor(Math.random()*900000)+100000) },
+  bonus:50, balance:0, earnings:0, pendingWith:0, totalWith:0, pendingEarn:0,
+  dailyDishes:0, roundsCompleted:0, specialRatings:0,
+  round:1, dishIdx:0, rating:0, rated:[] };
+
+const dishes=[
+  {name:'Tonkotsu Ramen',country:'🇯🇵 Japan',img:'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=70',rev:rndRev()},
+  {name:'Jollof Rice',country:'🇳🇬 Nigeria',img:'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=70',rev:rndRev()},
+  {name:'Tacos al Pastor',country:'🇲🇽 Mexico',img:'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&q=70',rev:rndRev()},
+  {name:'Hyderabadi Biryani',country:'🇮🇳 India',img:'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=70',rev:rndRev()},
+  {name:'Cacio e Pepe',country:'🇮🇹 Italy',img:'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=70',rev:rndRev()},
+  {name:'Pad Thai',country:'🇹🇭 Thailand',img:'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=600&q=70',rev:rndRev()},
+  {name:'Moussaka',country:'🇬🇷 Greece',img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70',rev:rndRev()},
+  {name:'Beef Bulgogi',country:'🇰🇷 South Korea',img:'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=600&q=70',rev:rndRev()},
+  {name:'Pho Bo',country:'🇻🇳 Vietnam',img:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&q=70',rev:rndRev()},
+  {name:'Bobotie',country:'🇿🇦 South Africa',img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=70',rev:rndRev()},
+  {name:'Churrasco',country:'🇧🇷 Brazil',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',rev:rndRev()},
+  {name:'Shakshuka',country:'🇮🇱 Israel',img:'https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=600&q=70',rev:rndRev()},
+  {name:'Rendang',country:'🇮🇩 Indonesia',img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=70',rev:rndRev()},
+  {name:'Coq au Vin',country:'🇫🇷 France',img:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=70',rev:rndRev(),special:true,mult:3,minBal:100},
+  {name:'Fufu & Egusi Soup',country:'🇬🇭 Ghana',img:'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=70',rev:rndRev()},
+  {name:'Pierogi',country:'🇵🇱 Poland',img:'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=70',rev:rndRev()},
+  {name:'Nasi Goreng',country:'🇮🇩 Indonesia',img:'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=70',rev:rndRev()},
+  {name:'Tagine',country:'🇲🇦 Morocco',img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=70',rev:rndRev()},
+  {name:'Fish & Chips',country:'🇬🇧 UK',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',rev:rndRev()},
+  {name:'Sushi Omakase',country:'🇯🇵 Japan',img:'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=70',rev:rndRev()},
+  {name:'Borscht',country:'🇺🇦 Ukraine',img:'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&q=70',rev:rndRev()},
+  {name:'Injera & Doro Wat',country:'🇪🇹 Ethiopia',img:'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=600&q=70',rev:rndRev()},
+  {name:'Peking Duck',country:'🇨🇳 China',img:'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=70',rev:rndRev()},
+  {name:'Ceviche',country:'🇵🇪 Peru',img:'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&q=70',rev:rndRev()},
+  {name:'Mansaf',country:'🇯🇴 Jordan',img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=70',rev:rndRev()},
+  {name:'Khachapuri',country:'🇬🇪 Georgia',img:'https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=600&q=70',rev:rndRev()},
+  {name:'Pastel de Nata',country:'🇵🇹 Portugal',img:'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=70',rev:rndRev()},
+  {name:'Lobster Thermidor',country:'🇫🇷 France',img:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=70',rev:rndRev(),special:true,mult:4,minBal:600},
+  {name:'Baklava',country:'🇹🇷 Turkey',img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=70',rev:rndRev()},
+  {name:'Mole Poblano',country:'🇲🇽 Mexico',img:'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=600&q=70',rev:rndRev()},
+  {name:'Tom Yum Goong',country:'🇹🇭 Thailand',img:'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=600&q=70',rev:rndRev()},
+  {name:'Wagyu Tasting Menu',country:'🇯🇵 Japan',img:'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=70',rev:rndRev(),special:true,mult:5,minBal:1000},
+];
+
+function rndRev(){return Math.floor(Math.random()*(6000-300)+300).toLocaleString();}
+const totalEarn=15+Math.random()*9;
+const earnPerDish=dishes.map(()=>+((totalEarn/32)*(0.7+Math.random()*0.6)).toFixed(2));
+const bonusPerDish=+(50/32).toFixed(4);
+
+function init(){
+  document.getElementById('sidebarName').textContent=S.user.name;
+  document.getElementById('sidebarId').textContent=S.user.id;
+  const ini=S.user.name.split(' ').map(n=>n[0]).join('');
+  document.getElementById('sidebarAvatar').textContent=ini;
+  loadDish();
+}
+function toggleDots(){document.getElementById('dotsDropdown').classList.toggle('open');}
+function closeDots(){document.getElementById('dotsDropdown').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.dots-wrap'))closeDots();});
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+function setTheme(t,el){document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');if(t==='light'){document.body.style.background='#f0ede8';document.body.style.color='#0a0a0a';}else{document.body.style.background='#0a0a0a';document.body.style.color='#f5f5f0';}}
+function logout(){window.location.href='index.html';}
+
+function loadDish(){
+  const i=S.dishIdx%32;
+  const d=dishes[i];
+  const um=document.getElementById('unlockMsg');
+  const rb=document.getElementById('rateBtn');
+  if(S.round===2&&S.balance<30){um.style.display='block';um.innerHTML='🔒 <strong>Round 2 Locked.</strong> Deposit at least $30 to unlock this round.';rb.disabled=true;return;}
+  if(S.round===3&&d.special&&d.minBal&&S.balance<d.minBal){um.style.display='block';um.innerHTML=`🔒 <strong>Haute Cuisine Locked.</strong> You need a balance of <strong>$${d.minBal}</strong> to rate this dish.`;rb.disabled=true;return;}
+  um.style.display='none';rb.disabled=false;
+  document.getElementById('dishImg').src=d.img;
+  document.getElementById('dishCountry').textContent=d.country;
+  document.getElementById('dishName').textContent=d.name;
+  document.getElementById('dishReviews').textContent=d.rev+' reviews';
+  document.getElementById('dishNum').textContent=`Dish ${i+1} of 32`;
+  const sb=document.getElementById('specialBadge');
+  if(d.special&&S.round===3){sb.style.display='block';sb.textContent=`⭐ x${d.mult} Earnings`;}else sb.style.display='none';
+  const mult=(d.special&&S.round===3)?d.mult:1;
+  const earn=(earnPerDish[i]*mult).toFixed(2);
+  document.getElementById('dishEarn').innerHTML=`Rate to earn <span>+$${earn}</span>`;
+  S.rating=0;
+  document.querySelectorAll('.star').forEach(s=>s.classList.remove('active'));
+  updateProg();
+  updateRoundBadges();
+}
+function setRating(n){S.rating=n;document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('active',i<n));}
+function rateDish(){
+  if(!S.rating){alert('Please select a star rating!');return;}
+  const i=S.dishIdx%32;
+  const d=dishes[i];
+  const mult=(d.special&&S.round===3)?d.mult:1;
+  const earn=+(earnPerDish[i]*mult).toFixed(2);
+  if(S.round===1)S.bonus=+Math.max(0,(S.bonus-bonusPerDish)).toFixed(2);
+  S.earnings=+(S.earnings+earn).toFixed(2);
+  S.pendingEarn=+(S.pendingEarn+earn).toFixed(2);
+  S.dailyDishes++;
+  S.rated.push(i);
+  if(d.special&&S.round===3)S.specialRatings++;
+  document.getElementById('rateBtn').disabled=true;
+  updateProg();
+}
+function nextDish(){
+  if(!S.rated.includes(S.dishIdx%32)){alert('Please rate this dish first!');return;}
+  S.dishIdx++;
+  const i=S.dishIdx%32;
+  if(i===0&&S.dishIdx>0){S.roundsCompleted++;if(S.round<3){S.round++;S.rated=[];alert(`Round ${S.round-1} complete! ${S.round===2?'Deposit $30 to unlock Round 2.':'Round 3 (Haute Cuisine) unlocked!'}`);}}
+  if(S.dailyDishes>=96){document.getElementById('dishViewer').style.display='none';document.getElementById('depletedMsg').style.display='block';return;}
+  loadDish();
+}
+function updateProg(){
+  const done=S.dishIdx%32;
+  document.getElementById('progFill').style.width=(done/32*100)+'%';
+  document.getElementById('progText').textContent=done+' / 32';
+}
+function updateRoundBadges(){
+  ['rb1','rb2','rb3'].forEach((id,i)=>{document.getElementById(id).classList.toggle('active-round',S.round===i+1);});
+}
+init();
+</script>
+</body>
+</html>
