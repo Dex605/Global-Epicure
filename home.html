@@ -274,6 +274,8 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 function logout(){window.location.href='index.html';}
 
 const stats = { bonus:50, balance:0, earnings:0, pendingWith:0, dailyDishes:0, round:1 };
+function loadState(){const d=localStorage.getItem('geWallet');if(d){const p=JSON.parse(d);Object.assign(stats,p);}}
+loadState();
 function updateStats(){
   document.getElementById('hBonus').textContent=stats.bonus.toFixed(2);
   document.getElementById('hBal').textContent=stats.balance.toFixed(2);
