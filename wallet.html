@@ -226,7 +226,7 @@ function setTheme(t,el){document.querySelectorAll('.theme-btn').forEach(b=>b.cla
 function logout(){window.location.href='index.html';}
 function updateUI(){
   const f=n=>n.toFixed(2);
-  S.balance=+(S.earnings + S.totalDeposits - S.totalWith).toFixed(2);
+  S.balance=+(S.earnings + S.totalDeposits - S.pendingWith - S.totalWith).toFixed(2);
   document.getElementById('wBonus').textContent=f(S.bonus);
   document.getElementById('wBal').textContent=f(S.balance);
   document.getElementById('wEarn').textContent=f(S.earnings);
@@ -270,7 +270,6 @@ function confirmPay(){
     if(amt<10){alert('Minimum withdrawal is $10.');return;}
     if(amt>S.balance){alert('Insufficient balance.');return;}
     S.pendingWith=+(S.pendingWith+amt).toFixed(2);
-    S.totalWith=+(S.totalWith+amt).toFixed(2);
     saveState();
     ps.textContent=`✓ $${amt.toFixed(2)} moved to Pending Withdrawals. Your withdrawal is being processed.`;
   }
