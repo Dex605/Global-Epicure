@@ -208,7 +208,8 @@ const S = { user: { name:'John Doe', email:'john@example.com', id:'GE-'+String(M
   dailyDishes:0, roundsCompleted:0, specialRatings:0,
   payFlow:'deposit', selAmt:0 };
 
-function init(){
+function loadState(){const d=localStorage.getItem('geWallet');if(d){const p=JSON.parse(d);Object.assign(S,p);}}
+function init(){loadState();
   document.getElementById('sidebarName').textContent=S.user.name;
   document.getElementById('sidebarId').textContent=S.user.id;
   const ini=S.user.name.split(' ').map(n=>n[0]).join('');

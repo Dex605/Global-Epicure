@@ -282,8 +282,10 @@ function rndRev(){return Math.floor(Math.random()*(6000-300)+300).toLocaleString
 const totalEarn=15+Math.random()*9;
 const earnPerDish=dishes.map(()=>+((totalEarn/32)*(0.7+Math.random()*0.6)).toFixed(2));
 const bonusPerDish=+(50/32).toFixed(4);
+function saveState(){localStorage.setItem('geWallet',JSON.stringify({bonus:S.bonus,balance:S.balance,earnings:S.earnings,pendingWith:S.pendingWith,totalWith:S.totalWith,pendingEarn:S.pendingEarn,dailyDishes:S.dailyDishes,roundsCompleted:S.roundsCompleted,specialRatings:S.specialRatings,round:S.round,dishIdx:S.dishIdx,rated:S.rated}));}
+function loadState(){const d=localStorage.getItem('geWallet');if(d){const p=JSON.parse(d);Object.assign(S,p);}}
 
-function init(){
+function init(){loadState();
   document.getElementById('sidebarName').textContent=S.user.name;
   document.getElementById('sidebarId').textContent=S.user.id;
   const ini=S.user.name.split(' ').map(n=>n[0]).join('');
@@ -334,6 +336,7 @@ function rateDish(){
   S.pendingEarn=+(S.pendingEarn+earn).toFixed(2);
   S.dailyDishes++;
   S.rated.push(i);
+  saveState();
   if(d.special&&S.round===3)S.specialRatings++;
   document.getElementById('rateBtn').disabled=true;
   updateProg();
@@ -343,6 +346,7 @@ function nextDish(){
   S.dishIdx++;
   const i=S.dishIdx%32;
   if(i===0&&S.dishIdx>0){S.roundsCompleted++;if(S.round<3){S.round++;S.rated=[];alert(`Round ${S.round-1} complete! ${S.round===2?'Deposit $30 to unlock Round 2.':'Round 3 (Haute Cuisine) unlocked!'}`);}}
+  saveState();
   if(S.dailyDishes>=96){document.getElementById('dishViewer').style.display='none';document.getElementById('depletedMsg').style.display='block';return;}
   loadDish();
 }
