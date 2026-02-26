@@ -277,6 +277,7 @@ const stats = { bonus:50, balance:0, earnings:0, pendingWith:0, dailyDishes:0, r
 function loadState(){const d=localStorage.getItem('geWallet');if(d){const p=JSON.parse(d);Object.assign(stats,p);}}
 loadState();
 function updateStats(){
+  stats.balance=+((stats.earnings||0) + (stats.totalDeposits||0) - (stats.pendingWith||0) - (stats.totalWith||0)).toFixed(2);
   document.getElementById('hBonus').textContent=stats.bonus.toFixed(2);
   document.getElementById('hBal').textContent=stats.balance.toFixed(2);
   document.getElementById('hEarn').textContent=stats.earnings.toFixed(2);
