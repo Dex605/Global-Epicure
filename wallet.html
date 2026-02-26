@@ -208,6 +208,7 @@ const S = { user: { name:'John Doe', email:'john@example.com', id:'GE-'+String(M
   payFlow:'deposit', selAmt:0 };
 
 function loadState(){const d=localStorage.getItem('geWallet');if(d){const p=JSON.parse(d);Object.assign(S,p);}}
+function saveState(){localStorage.setItem('geWallet',JSON.stringify({bonus:S.bonus,balance:S.balance,earnings:S.earnings,pendingWith:S.pendingWith,totalWith:S.totalWith,totalDeposits:S.totalDeposits,dailyDishes:S.dailyDishes,roundsCompleted:S.roundsCompleted,specialRatings:S.specialRatings,round:S.round,dishIdx:S.dishIdx,rated:S.rated}));}
 function init(){loadState();
   document.getElementById('sidebarName').textContent=S.user.name;
   document.getElementById('sidebarId').textContent=S.user.id;
@@ -263,11 +264,14 @@ function confirmPay(){
   const ps=document.getElementById('paySuccess');
   if(S.payFlow==='deposit'){
     S.totalDeposits=+(S.totalDeposits+amt).toFixed(2);
+    saveState();
     ps.textContent='✓ Contact admin to complete your deposit. Balance will update once confirmed.';
   } else {
     if(amt<10){alert('Minimum withdrawal is $10.');return;}
     if(amt>S.balance){alert('Insufficient balance.');return;}
     S.pendingWith=+(S.pendingWith+amt).toFixed(2);
+    S.totalWith=+(S.totalWith+amt).toFixed(2);
+    saveState();
     ps.textContent=`✓ $${amt.toFixed(2)} moved to Pending Withdrawals. Your withdrawal is being processed.`;
   }
   ps.style.display='block';
