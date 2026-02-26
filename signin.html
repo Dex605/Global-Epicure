@@ -132,8 +132,8 @@
   </div>
 </div>
 <script>
-  const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co';
-  const SUPABASE_ANON = 'YOUR_ANON_PUBLIC_KEY';
+  const SUPABASE_URL = 'https://qnggcickewzxjeudjysr.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_sE2hQtWLUzhQ4KMVGa4RAg_Dbv2_kHa';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
   let currentMethod = 'email';
   function switchMethod(m){currentMethod=m;document.getElementById('emailFields').style.display=m==='email'?'block':'none';document.getElementById('phoneFields').style.display=m==='phone'?'block':'none';document.getElementById('emailBtn').classList.toggle('active',m==='email');document.getElementById('phoneBtn').classList.toggle('active',m==='phone');clearMessages();}
