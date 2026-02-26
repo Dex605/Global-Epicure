@@ -134,13 +134,13 @@
 <script>
   const SUPABASE_URL = 'https://qnggcickewzxjeudjysr.supabase.co';
   const SUPABASE_ANON = 'sb_publishable_sE2hQtWLUzhQ4KMVGa4RAg_Dbv2_kHa';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
   let currentMethod = 'email';
   function switchMethod(m){currentMethod=m;document.getElementById('emailFields').style.display=m==='email'?'block':'none';document.getElementById('phoneFields').style.display=m==='phone'?'block':'none';document.getElementById('emailBtn').classList.toggle('active',m==='email');document.getElementById('phoneBtn').classList.toggle('active',m==='phone');clearMessages();}
   function showError(msg){const e=document.getElementById('errorMsg');e.innerHTML=msg;e.style.display='block';document.getElementById('successMsg').style.display='none';}
   function showSuccess(msg){const e=document.getElementById('successMsg');e.textContent=msg;e.style.display='block';document.getElementById('errorMsg').style.display='none';}
   function clearMessages(){document.getElementById('errorMsg').style.display='none';document.getElementById('successMsg').style.display='none';}
-  async function signInWithGoogle(){clearMessages();const{error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/home.html'}});if(error)showError(error.message);}
+  async function signInWithGoogle(){clearMessages();const{error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/home.html'}});if(error)showError(error.message);}
   async function handleSignIn(){
     clearMessages();
     const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Signing in…';
@@ -149,14 +149,14 @@
         const email=document.getElementById('emailInput').value.trim();
         const password=document.getElementById('passwordInput').value;
         if(!email||!password){showError('Please fill in all fields.');btn.disabled=false;btn.textContent='Continue →';return;}
-        const{error}=await supabase.auth.signInWithPassword({email,password});
+        const{error}=await supabaseClient.auth.signInWithPassword({email,password});
         if(error)throw error;
         window.location.href='home.html';
       }else{
         const code=document.getElementById('countrySelect').value;
         const local=document.getElementById('phoneInput').value.trim().replace(/^0/,'');
         if(!local){showError('Please enter your phone number.');btn.disabled=false;btn.textContent='Continue →';return;}
-        const{error}=await supabase.auth.signInWithOtp({phone:code+local});
+        const{error}=await supabaseClient.auth.signInWithOtp({phone:code+local});
         if(error)throw error;
         showSuccess('OTP sent to your phone!');showOTPField(code+local);
       }
@@ -169,14 +169,14 @@
     div.innerHTML='<label>OTP Code</label><input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6"/>';
     btn.parentNode.insertBefore(div,btn);btn.onclick=()=>verifyOTP(phone);
   }
-  async function verifyOTP(phone){clearMessages();const token=(document.getElementById('otpInput')?.value||'').trim();if(!token){showError('Please enter the OTP.');return;}const{error}=await supabase.auth.verifyOtp({phone,token,type:'sms'});if(error){showError('Invalid OTP. Try again.');return;}window.location.href='home.html';}
+  async function verifyOTP(phone){clearMessages();const token=(document.getElementById('otpInput')?.value||'').trim();if(!token){showError('Please enter the OTP.');return;}const{error}=await supabaseClient.auth.verifyOtp({phone,token,type:'sms'});if(error){showError('Invalid OTP. Try again.');return;}window.location.href='home.html';}
   function openReset(){document.getElementById('resetModal').classList.add('open');}
   function closeReset(){document.getElementById('resetModal').classList.remove('open');}
   async function sendReset(){
     const email=document.getElementById('resetEmail').value.trim();
     document.getElementById('resetError').style.display='none';document.getElementById('resetSuccess').style.display='none';
     if(!email){document.getElementById('resetError').textContent='Enter a valid email.';document.getElementById('resetError').style.display='block';return;}
-    const{error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/reset.html'});
+    const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/reset.html'});
     if(error){document.getElementById('resetError').textContent=error.message;document.getElementById('resetError').style.display='block';}
     else{document.getElementById('resetSuccess').textContent='Reset link sent! Check your inbox.';document.getElementById('resetSuccess').style.display='block';}
   }

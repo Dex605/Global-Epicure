@@ -128,7 +128,7 @@
 <script>
   const SUPABASE_URL = 'https://qnggcickewzxjeudjysr.supabase.co';
   const SUPABASE_ANON = 'sb_publishable_sE2hQtWLUzhQ4KMVGa4RAg_Dbv2_kHa';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
   let currentMethod = 'email';
   function switchMethod(m){
   currentMethod = m;
@@ -147,7 +147,7 @@
   function showError(msg){const e=document.getElementById('errorMsg');e.textContent=msg;e.style.display='block';document.getElementById('successMsg').style.display='none';}
   function showSuccess(msg){const e=document.getElementById('successMsg');e.textContent=msg;e.style.display='block';document.getElementById('errorMsg').style.display='none';}
   function clearMessages(){document.getElementById('errorMsg').style.display='none';document.getElementById('successMsg').style.display='none';}
-  async function signUpWithGoogle(){clearMessages();const{error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/home.html'}});if(error)showError(error.message);}
+  async function signUpWithGoogle(){clearMessages();const{error}=await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/home.html'}});if(error)showError(error.message);}
   async function handleSignUp(){
     clearMessages();
     const name=document.getElementById('nameInput').value.trim();
@@ -161,7 +161,7 @@
       if(currentMethod==='email'){
         const email=document.getElementById('emailInput').value.trim();
         if(!email){showError('Please enter your email.');btn.disabled=false;btn.textContent='Continue →';return;}
-        const{error}=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});
+        const{error}=await supabaseClient.auth.signUp({email,password,options:{data:{full_name:name}}});
         if(error)throw error;
         showSuccess('Account created! Check your email to confirm, then sign in.');
         setTimeout(()=>window.location.href='home.html',2200);
@@ -169,7 +169,7 @@
         const code=document.getElementById('countrySelect').value;
         const local=document.getElementById('phoneInput').value.trim().replace(/^0/,'');
         if(!local){showError('Please enter your phone number.');btn.disabled=false;btn.textContent='Continue →';return;}
-        const{error}=await supabase.auth.signInWithOtp({phone:code+local});
+        const{error}=await supabaseClient.auth.signInWithOtp({phone:code+local});
         if(error)throw error;
         showSuccess('OTP sent! Enter it below.');
         showOTPField(name,code+local);
@@ -187,7 +187,7 @@
     clearMessages();
     const token=(document.getElementById('otpInput')?.value||'').trim();
     if(!token){showError('Please enter the OTP code.');return;}
-    const{error}=await supabase.auth.verifyOtp({phone,token,type:'sms'});
+    const{error}=await supabaseClient.auth.verifyOtp({phone,token,type:'sms'});
     if(error){showError(error.message);return;}
     window.location.href='home.html';
   }
