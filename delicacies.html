@@ -239,7 +239,7 @@
 <div class="modal-overlay" id="privacyModal"><div class="modal"><button class="modal-close" onclick="closeModal('privacyModal')">✕</button><h3>Privacy Policy</h3><div class="text-content" style="margin-top:18px;"><h4>Data We Collect</h4><p>We collect your name, email, dish ratings, and transaction data.</p></div></div></div>
 <script>
 const S = { user: { name:'John Doe', email:'john@example.com', id:'GE-'+String(Math.floor(Math.random()*900000)+100000) },
-  bonus:50, balance:0, earnings:0, pendingWith:0, totalWith:0, pendingEarn:0,
+  bonus:50, balance:0, earnings:0, pendingWith:0, totalWith:0, totalDeposits:0,
   dailyDishes:0, roundsCompleted:0, specialRatings:0,
   round:1, dishIdx:0, rating:0, rated:[] };
 
@@ -282,7 +282,7 @@ function rndRev(){return Math.floor(Math.random()*(6000-300)+300).toLocaleString
 const totalEarn=15+Math.random()*9;
 const earnPerDish=dishes.map(()=>+((totalEarn/32)*(0.7+Math.random()*0.6)).toFixed(2));
 const bonusPerDish=+(50/32).toFixed(4);
-function saveState(){localStorage.setItem('geWallet',JSON.stringify({bonus:S.bonus,balance:S.balance,earnings:S.earnings,pendingWith:S.pendingWith,totalWith:S.totalWith,pendingEarn:S.pendingEarn,dailyDishes:S.dailyDishes,roundsCompleted:S.roundsCompleted,specialRatings:S.specialRatings,round:S.round,dishIdx:S.dishIdx,rated:S.rated}));}
+function saveState(){localStorage.setItem('geWallet',JSON.stringify({bonus:S.bonus,balance:S.balance,earnings:S.earnings,pendingWith:S.pendingWith,totalWith:S.totalWith,totalDeposits:S.totalDeposits,dailyDishes:S.dailyDishes,roundsCompleted:S.roundsCompleted,specialRatings:S.specialRatings,round:S.round,dishIdx:S.dishIdx,rated:S.rated}));}
 function loadState(){const d=localStorage.getItem('geWallet');if(d){const p=JSON.parse(d);Object.assign(S,p);}}
 
 function init(){loadState();
@@ -333,7 +333,6 @@ function rateDish(){
   const earn=+(earnPerDish[i]*mult).toFixed(2);
   if(S.round===1)S.bonus=+Math.max(0,(S.bonus-bonusPerDish)).toFixed(2);
   S.earnings=+(S.earnings+earn).toFixed(2);
-  S.pendingEarn=+(S.pendingEarn+earn).toFixed(2);
   S.dailyDishes++;
   S.rated.push(i);
   saveState();

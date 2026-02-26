@@ -177,10 +177,9 @@
         <div class="wallet-cell"><div class="wallet-cell-label">Welcome Bonus</div><div class="wallet-cell-value gold">$<span id="wBonus">50.00</span></div></div>
         <div class="wallet-cell"><div class="wallet-cell-label">Daily Dishes Rated</div><div class="wallet-cell-value dim" id="wDaily">0</div></div>
         <div class="wallet-cell"><div class="wallet-cell-label">Balance</div><div class="wallet-cell-value green">$<span id="wBal">0.00</span></div></div>
-        <div class="wallet-cell"><div class="wallet-cell-label">Earnings</div><div class="wallet-cell-value green">$<span id="wEarn">0.00</span></div></div>
+        <div class="wallet-cell"><div class="wallet-cell-label">Total Earnings</div><div class="wallet-cell-value green">$<span id="wEarn">0.00</span></div></div>
         <div class="wallet-cell"><div class="wallet-cell-label">Rounds Completed</div><div class="wallet-cell-value dim" id="wRounds">0</div></div>
         <div class="wallet-cell"><div class="wallet-cell-label">Pending Withdrawals</div><div class="wallet-cell-value red-val">$<span id="wPendWith">0.00</span></div></div>
-        <div class="wallet-cell"><div class="wallet-cell-label">Pending Earnings</div><div class="wallet-cell-value gold">$<span id="wPendEarn">0.00</span></div></div>
         <div class="wallet-cell"><div class="wallet-cell-label">Special Ratings</div><div class="wallet-cell-value dim" id="wSpecial">0</div></div>
         <div class="wallet-cell"><div class="wallet-cell-label">Total Withdrawals</div><div class="wallet-cell-value dim">$<span id="wTotalWith">0.00</span></div></div>
       </div>
@@ -204,7 +203,7 @@
 <div class="modal-overlay" id="privacyModal"><div class="modal"><button class="modal-close" onclick="closeModal('privacyModal')">✕</button><h3>Privacy Policy</h3><div class="text-content" style="margin-top:18px;"><h4>Data We Collect</h4><p>We collect your name, email, dish ratings, and transaction data.</p></div></div></div>
 <script>
 const S = { user: { name:'John Doe', email:'john@example.com', id:'GE-'+String(Math.floor(Math.random()*900000)+100000) },
-  bonus:50, balance:0, earnings:0, pendingWith:0, totalWith:0, pendingEarn:0,
+  bonus:50, balance:0, earnings:0, pendingWith:0, totalWith:0, totalDeposits:0,
   dailyDishes:0, roundsCompleted:0, specialRatings:0,
   payFlow:'deposit', selAmt:0 };
 
@@ -226,11 +225,11 @@ function setTheme(t,el){document.querySelectorAll('.theme-btn').forEach(b=>b.cla
 function logout(){window.location.href='index.html';}
 function updateUI(){
   const f=n=>n.toFixed(2);
+  S.balance=+(S.earnings + S.totalDeposits - S.totalWith).toFixed(2);
   document.getElementById('wBonus').textContent=f(S.bonus);
   document.getElementById('wBal').textContent=f(S.balance);
   document.getElementById('wEarn').textContent=f(S.earnings);
   document.getElementById('wPendWith').textContent=f(S.pendingWith);
-  document.getElementById('wPendEarn').textContent=f(S.pendingEarn);
   document.getElementById('wTotalWith').textContent=f(S.totalWith);
   document.getElementById('wDaily').textContent=S.dailyDishes;
   document.getElementById('wRounds').textContent=S.roundsCompleted;
