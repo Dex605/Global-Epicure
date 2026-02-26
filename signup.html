@@ -26,6 +26,11 @@
     showSuccess('Email confirmed! Redirecting…');
     setTimeout(()=>window.location.href='home.html',1500);
   }
+  function togglePassword(id, btn){
+    const input = document.getElementById(id);
+    if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
+  }
 </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -73,7 +78,11 @@
     .signin-link a { color: var(--red-light); text-decoration: none; }
     .error-msg { color: var(--red-light); font-size: 0.78rem; margin-bottom: 14px; display: none; }
     .success-msg { color: #2ecc71; font-size: 0.78rem; margin-bottom: 14px; display: none; }
-  </style>
+    .password-wrapper { position: relative; }
+  .password-wrapper input { width: 100%; padding-right: 42px; box-sizing: border-box; }
+  .eye-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--gray); font-size: 1rem; padding: 0; display: flex; align-items: center; }
+  .eye-toggle:hover { color: var(--white); }
+</style>
 </head>
 <body>
 <div class="page-wrap">
@@ -136,7 +145,7 @@
         </div>
       </div>
     </div>
-    <div class="field"><label>Password</label><input type="password" id="passwordInput" placeholder="Min 8 characters"/></div>
+    <div class="field"><label>Password</label><div class="password-wrapper"><input type="password" id="passwordInput" placeholder="Min 8 characters"/><button type="button" class="eye-toggle" onclick="togglePassword('passwordInput',this)">👁</button></div></div>
     <div class="terms-row">
       <input type="checkbox" id="termsCheck"/>
       <span>I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.</span>
@@ -230,6 +239,11 @@
     if(error){showError(error.message);btn.disabled=false;btn.textContent='Verify Code';return;}
     showSuccess('Email confirmed! Redirecting…');
     setTimeout(()=>window.location.href='home.html',1500);
+  }
+  function togglePassword(id, btn){
+    const input = document.getElementById(id);
+    if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
   }
 </script>
 </body>
