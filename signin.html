@@ -6,12 +6,13 @@
   <title>Sign In – Global Epicure</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">  function togglePassword(id, btn){
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  function togglePassword(id, btn){
     const input = document.getElementById(id);
     if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈'; }
     else { input.type = 'password'; btn.textContent = '👁'; }
   }
-</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --red: #C0392B; --red-light: #E74C3C; --black: #0a0a0a; --white: #f5f5f0; --glass: rgba(255,255,255,0.06); --glass-border: rgba(255,255,255,0.12); --input-bg: rgba(255,255,255,0.05); }
@@ -107,7 +108,7 @@
     <div class="success-msg" id="successMsg"></div>
     <div id="emailFields">
       <div class="field"><label>Email Address</label><input type="email" id="emailInput" placeholder="you@example.com"/></div>
-      <div class="field"><label>Password</label><input type="password" id="passwordInput" placeholder="Your password" onkeydown="if(event.key==='Enter')handleSignIn()"/></div>
+      <div class="field"><label>Password</label><div class="password-wrapper"><input type="password" id="passwordInput" placeholder="Your password" onkeydown="if(event.key==='Enter')handleSignIn()"/><button type="button" class="eye-toggle" onclick="togglePassword('passwordInput',this)">👁</button></div></div>
     </div>
     <div id="phoneFields" style="display:none;">
       <div class="field">
@@ -194,6 +195,5 @@
     if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈'; }
     else { input.type = 'password'; btn.textContent = '👁'; }
   }
-</script>
 </body>
 </html>
