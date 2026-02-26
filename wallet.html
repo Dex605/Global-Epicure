@@ -262,12 +262,11 @@ function confirmPay(){
   if(!amt||amt<=0){alert('Please select or enter an amount.');return;}
   const ps=document.getElementById('paySuccess');
   if(S.payFlow==='deposit'){
-    S.balance=+(S.balance+amt).toFixed(2);
+    S.totalDeposits=+(S.totalDeposits+amt).toFixed(2);
     ps.textContent='✓ Contact admin to complete your deposit. Balance will update once confirmed.';
   } else {
     if(amt<10){alert('Minimum withdrawal is $10.');return;}
-    if(amt>S.earnings){alert('Insufficient earnings.');return;}
-    S.earnings=+(S.earnings-amt).toFixed(2);
+    if(amt>S.balance){alert('Insufficient balance.');return;}
     S.pendingWith=+(S.pendingWith+amt).toFixed(2);
     ps.textContent=`✓ $${amt.toFixed(2)} moved to Pending Withdrawals. Your withdrawal is being processed.`;
   }
